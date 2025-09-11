@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 
+import { Carousel } from 'react-responsive-carousel';
+import 'react-responsive-carousel/lib/styles/carousel.min.css'; // Importa los estilos del carruse
+
 
 // Estilos CSS integrados
 const styles = `
@@ -355,6 +358,41 @@ body {
   border-radius: 8px;
   margin-bottom: 1rem;
 }
+  /* Estilos adicionales para el carrusel */
+.carousel-container {
+    padding: 2rem 0; /* Espaciado alrededor del carrusel */
+    max-width: 1200px; /* Ancho máximo para el carrusel */
+    margin: 0 auto; /* Centrar el carrusel */
+}
+
+/* Ajustes para el item del producto dentro del carrusel */
+.carousel-product-item {
+    padding: 0 10px; /* Espacio entre los productos del carrusel */
+    display: flex; /* Para centrar el contenido si es necesario */
+    justify-content: center;
+    align-items: center;
+}
+
+/* Modificar el estilo base del producto para que encaje mejor */
+.carousel-product-item .product-item {
+    width: 100%; /* Asegura que el producto ocupe el espacio disponible */
+    max-width: 300px; /* Ajusta el tamaño máximo de cada producto si es necesario */
+    margin: 0 auto; /* Centra el producto dentro de su slide */
+    box-sizing: border-box; /* Para que el padding no desborde */
+}
+
+/* Ajustes para los indicadores del carrusel si decides mostrarlos (showIndicators={true}) */
+.carousel .control-dots {
+    position: relative;
+    bottom: -30px; /* Ajusta la posición de los puntos */
+}
+
+.carousel .dot {
+    background: var(--primary-color);
+}
+.carousel .dot.selected {
+    background: var(--secondary-color);
+}
 `;
 
 // Datos de productos
@@ -488,11 +526,24 @@ function App() {
               Ayudamos a personas con movilidad reducida a recuperar su independencia y mejorar su calidad de vida. Ofrecemos una amplia gama de equipos como andadores, sillas de ruedas, muletas, camas ortopédicas y más. Nuestro servicio incluye atención personalizada y la posibilidad de alquiler por períodos flexibles.
             </p>
           </div>
-          <div className="products-preview">
-            <Product product={productos[0]} onViewDetails={handleViewDetails} />
-            <Product product={productos[1]} onViewDetails={handleViewDetails} />
-            <Product product={productos[2]} onViewDetails={handleViewDetails} />
-          </div>
+          <div className="carousel-container"> {/* Añadimos un contenedor para los estilos */}
+ <div className="carousel-container">
+ <Carousel
+  showArrows={true}
+  showStatus={false}
+  showThumbs={false}
+  infiniteLoop={true}
+  autoPlay={true}
+  interval={5000} // Puedes ajustar el tiempo
+>
+  {productos.map((producto) => (
+    <div key={producto.id}>
+      <Product product={producto} onViewDetails={handleViewDetails} />
+    </div>
+  ))}
+</Carousel>
+</div>
+</div>
         </section>
       )}
 
