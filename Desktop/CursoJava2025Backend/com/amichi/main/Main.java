@@ -4,6 +4,7 @@ import com.amichi.dao.ArticuloDAO; // IMPORTACIÓN CLAVE 1
 import com.amichi.modelo.Articulo; // IMPORTACIÓN CLAVE 2
 import java.util.Scanner;
 import java.util.List;
+import com.amichi.excepciones.ArticuloNoEncontradoException;
 
 public class Main {
 
@@ -101,10 +102,13 @@ public class Main {
         }
     }
 
+    // Archivo: Main.java
+
     private static void modificarArticulo() {
         System.out.println("\n-- MODIFICAR ARTÍCULO --");
         int id = leerEntero("Ingrese el ID del artículo a modificar: ");
 
+        // Primero buscamos el artículo para mostrar los datos actuales.
         Articulo existente = dao.buscarPorId(id);
 
         if (existente != null) {
@@ -113,24 +117,40 @@ public class Main {
             String nuevoNombre = leerTexto("Ingrese el NUEVO nombre: ");
             double nuevoPrecio = leerDouble("Ingrese el NUEVO precio: ");
 
+            // Creamos el objeto con los nuevos datos
             Articulo articuloActualizado = new Articulo(id, nuevoNombre, nuevoPrecio);
 
-            if (dao.actualizar(articuloActualizado)) {
+            // 🚨 CAMBIO: Implementamos el bloque try-catch para actualizar
+            try {
+                dao.actualizar(articuloActualizado); // Llama al método que puede lanzar la excepción
                 System.out.println("✅ Modificación realizada con éxito.");
+            } catch (ArticuloNoEncontradoException e) {
+                // Capturamos el error. Aunque ya chequeamos antes con buscarPorId,
+                // este es el manejo profesional del error de actualización.
+                System.err.println("❌ ERROR: " + e.getMessage());
             }
+
         } else {
-            System.out.println("❌ Error: No se encontró el artículo con ID " + id);
+            // Si el artículo no se encontró en buscarPorId, mostramos un error simple
+            System.err.println("❌ ERROR: No se encontró el artículo con ID " + id + " para modificar.");
         }
     }
+
+    // Archivo: Main.java
 
     private static void eliminarArticulo() {
         System.out.println("\n-- ELIMINAR ARTÍCULO --");
         int id = leerEntero("Ingrese el ID del artículo a eliminar: ");
 
-        if (dao.eliminar(id)) {
+        // 🚨 CAMBIO: Implementamos el bloque try-catch
+        try {
+            dao.eliminar(id); // La llamada al método que lanza la excepción
             System.out.println("✅ Artículo ID " + id + " eliminado con éxito.");
-        } else {
-            System.out.println("❌ Error: No se encontró el artículo con ID " + id + " para eliminar.");
+        } catch (ArticuloNoEncontradoException e) {
+            // Capturamos la excepción si el ID no existe
+            // e.getMessage() trae el mensaje que definimos en la clase
+            // ArticuloNoEncontradoException
+            System.err.println("❌ ERROR: " + e.getMessage());
         }
     }
 }

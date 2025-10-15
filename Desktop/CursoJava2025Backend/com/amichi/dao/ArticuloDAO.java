@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.amichi.modelo.Articulo;
+import com.amichi.excepciones.ArticuloNoEncontradoException;
 
 public class ArticuloDAO {
 
@@ -40,22 +41,32 @@ public class ArticuloDAO {
     }
 
     // UPDATE
-    public boolean actualizar(Articulo articuloActualizado) {
+    // Archivo: ArticuloDAO.java
+
+    // Update
+    // 🚨 CAMBIO 3: Cambia 'boolean' a 'void'
+    public void actualizar(Articulo articuloActualizado) {
         Articulo existente = buscarPorId(articuloActualizado.getId());
 
-        // Sintaxis correcta del if (con paréntesis)
         if (existente != null) {
             existente.setNombre(articuloActualizado.getNombre());
             existente.setPrecio(articuloActualizado.getPrecio());
-            return true;
+            // ¡Ya no hay 'return true' aquí!
+        } else {
+            // 🚨 CAMBIO 4: Si no existe, lanzamos la excepción
+            throw new ArticuloNoEncontradoException(articuloActualizado.getId());
         }
-        return false;
+        // ¡Ya no hay 'return false' aquí!
     }
 
     // DELETE (Borrar)
-    public boolean eliminar(int id) {
-        // Uso de getId() y punto y coma final (;)
-        return listaArticulos.removeIf(a -> a.getId() == id);
+    public void eliminar(int id) {
+        // removeIf devuelve true si se elimina algo, false si no encuentra el ID
+        boolean eliminado = listaArticulos.removeIf(a -> a.getId() == id);
+        // 🚨 CAMBIO 2: Si NO se eliminó, lanzamos la excepción
+        if (!eliminado) {
+            throw new ArticuloNoEncontradoException(id);
+        }
     }
 
     // Métodos extras (Getters/Setters para la lista)
